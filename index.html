@@ -1,0 +1,37 @@
+<!doctype html>  
+<html>
+<body>
+  <script src="http://localhost:3001/socket.io/socket.io.js"></script>
+  <script>
+    eventToListenTo = 'tx'
+    room = 'inv'
+
+    var socket = io("http://localhost:3001/");
+    var expressSocket  = io("http://localhost:3000/");
+
+    socket.on('connect', function() {
+      // Join the room.
+      socket.emit('subscribe', room);
+    });
+
+    expressSocket.on('connect', function(){
+    	console.log("applciatin connected to express");
+    });
+
+
+    socket.on('tx', function(trans) {
+      // console.log("New transaction received: " + trans.txid)
+      expressSocket.emit('tx', trans);
+    });
+
+    socket.on('block', function(blockHash){
+    	// console.log("new block received", blcokId);
+    	expressSocket.emit('block', blockHash);
+    })
+
+  </script>
+
+  <h1>Bitcoin Testnet</h1>
+
+</body>
+</html>
